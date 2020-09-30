@@ -1,0 +1,25 @@
+{
+  "name": "tag-checker",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "keywords": [],
+  "author": "Irene B",
+  "license": "ISC",
+  "description": "Basic tag checker",
+  "dependencies": {
+    "jest": "^26.4.2",
+    "lodash": "^4.17.20"
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/IreneBMonroe/tag-checker.git"
+  },
+  "bugs": {
+    "url": "https://github.com/IreneBMonroe/tag-checker/issues"
+  },
+  "homepage": "https://github.com/IreneBMonroe/tag-checker#readme"
+}
