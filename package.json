@@ -10,10 +10,11 @@
   "license": "ISC",
   "description": "Basic tag checker",
   "dependencies": {
-    "jest": "^26.4.2",
     "lodash": "^4.17.20"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "jest": "^26.4.2"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/IreneBMonroe/tag-checker.git"
