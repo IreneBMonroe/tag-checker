@@ -35,17 +35,18 @@ const validateTag = (markup) =>{
                             result = {
                                 success: false,
                                 expected: `</${stack[stack.length-1]}>`,
-                                unexpected: tag
+                                unexpected: tag,
+                                message: `Expected </${stack[stack.length-1]}> found ${tag}`
                             };
 
                         } else if(!_.includes(stack, tagKey)){
                             let foundMatch = _.find(stack, tagKey);
-                            console.log('current stack', foundMatch, stack);
                             if (!foundMatch){
                                 result = {
                                     success: false,
                                     expected: '#',
-                                    unexpected: tag
+                                    unexpected: tag,
+                                    message: `Expected # found ${tag}`
                                 };
                             }
 
@@ -63,7 +64,7 @@ const validateTag = (markup) =>{
         result = { success: true, message: 'Correctly tagged paragraph'} ;
     } else if (stack.length > 0 && result == null){
         // this is mean missing close tag
-        result = {success: false, expected: `</${stack[0]}>`, unexpected: '#'};
+        result = {success: false, expected: `</${stack[0]}>`, unexpected: '#', message: `Expected </${stack[0]}> found #`};
     }
 
     return result;
@@ -71,9 +72,9 @@ const validateTag = (markup) =>{
 
 exports.handler = async (event, context, callback) => {
 
-    let validate = await validateTag(event.body);
+    let validate = validateTag(event.body);
     if (!validate.success){
-        return callback({message: `Expected ${validate.expected} found ${validate.unexpected}`});
+        return callback({message: validate.message});
     } else {
         let response = {
             isBase64Encoded: false,
