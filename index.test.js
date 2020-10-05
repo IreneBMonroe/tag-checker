@@ -71,7 +71,6 @@ test('Catch error missing open tags or an extra closing tag', async (done) => {
             });
             done();
         }
-        done();
     };
     return await tagChecker.handler(event, context, callback);
 });
@@ -85,6 +84,22 @@ test('Catch error missing close tag', async (done) => {
         if (err) {
             expect(err).toEqual({
                 message: 'Expected <\/B> found #'
+            });
+            done();
+        }
+    };
+    return await tagChecker.handler(event, context, callback);
+});
+
+test('Catch error missing invalid tag', async (done) => {
+    let event = {
+        body: '<B><C>This should be centred and in boldface, <B\/B>but there is a missing closing tag</C></B>'
+    };
+    
+    const callback = (err, response) => {
+        if (err) {
+            expect(err).toEqual({
+                message: 'Found invalid tag <B\/B>'
             });
             done();
         }

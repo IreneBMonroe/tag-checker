@@ -1,5 +1,14 @@
 const _ = require('lodash');
 
+const isValidTag = (tag) => {
+    //Is valid open tag or close Tag
+    if ((/<[A-Z]>/g).test(tag) || (/<\/[A-Z]>/g).test(tag)){
+        return true;
+    } else{
+        return false;
+    }
+};
+
 const validateTag = (markup) =>{
     if (!markup) return;
     const stack = [];
@@ -10,57 +19,46 @@ const validateTag = (markup) =>{
     const allTags = htmlText.match(/<.*?>/g);
 
     let result = null;
-    if (allTags){
-        _.forEach(allTags, (tag, i) =>{
-            let tagKey = tag.match(/[A-Z]/g)[0];
-            if (result === null){
-                if (!_.includes(tag, '/')){
-                    // Add all open tag to stack
-                    if(stack.length > 0){
-                        let foundTag = _.find(stack, tagKey);
-                        if(!foundTag){
-                            stack.push(tagKey);
-                        }
-                    }else{
-                        // Update add open tag to stack
-                        stack.push(tagKey);
-                    }
-                }else {
-                    if (_.includes(tag, '/')) {
-
-                        // if closing tag expect to see open tag as last index of stack
-                        if (!_.isEmpty(stack) || stack.length > 0) {
-
-                            if (_.includes(stack, tagKey) && stack[stack.length-1] !== tagKey) {
-                                // wrong nesting case
-                                result = {
-                                    success: false,
-                                    expected: `</${stack[stack.length-1]}>`,
-                                    unexpected: tag,
-                                    message: `Expected </${stack[stack.length-1]}> found ${tag}`
-                                };
-
-                            } else if(!_.includes(stack, tagKey)){
-                                //Missing open tag
-                                let foundMatch = _.find(stack, tagKey);
-                                if (!foundMatch){
-                                    result = {
-                                        success: false,
-                                        expected: '#',
-                                        unexpected: tag,
-                                        message: `Expected # found ${tag}`
-                                    };
-                                }
-
-                            } else {
-                                //remove tag from stack if closing tag is found
-                                _.pullAt(stack, stack.length-1);
-                            }
-                        }
-                    }
+    
+    for(let i =0; i < allTags.length; i++){
+        let isValid = isValidTag(allTags[i]);
+        if (isValid){
+            let tagKey = allTags[i].match(/[A-Z]/g)[0];
+            if (!_.includes(allTags[i], '/')){
+                // Add all open tag to stack
+                stack.push(tagKey);
+            }else {
+                if (stack.length > 0 && stack[stack.length-1] !== tagKey) {
+                    // wrong nesting case
+                    result = {
+                        success: false,
+                        expected: `</${stack[stack.length-1]}>`,
+                        unexpected: allTags[i],
+                        message: `Expected </${stack[stack.length-1]}> found ${allTags[i]}`
+                    };
+                    break;
+        
+                } else if(!_.includes(stack, tagKey)){
+                    //Missing open tag
+                    result = {
+                        success: false,
+                        expected: '#',
+                        unexpected: allTags[i],
+                        message: `Expected # found ${allTags[i]}`
+                    };
+                    break;
+        
+                } else {
+                    //remove tag from stack if closing tag is found
+                    _.pullAt(stack, stack.length-1);
                 }
             }
-        });
+        } else {
+            // Tag is invalid
+            result = {success: false, message: `Found invalid tag ${allTags[i]}`};
+            break;
+        }
+        
     }
 
     if (_.isEmpty(stack) && result == null){
