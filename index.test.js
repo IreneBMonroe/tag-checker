@@ -3,13 +3,33 @@ const context = 'context';
 
 test('Expect this test case to pass', async (done) => {
     let event = {
-        body: 'The following text<C><B>is centred and in boldface</B></C>'
+        body: 'The following text<C><B>is centred and in boldface<\/B></C>'
     };
     const callback = (err, response) => {
         if (err) {
             done(err);
         }
 
+        expect(response.statusCode).toEqual(200);
+        expect(typeof response.body).toBe("string");
+        let body = JSON.parse(response.body);
+        expect(body).toEqual({
+            message: 'Correctly tagged paragraph'
+        });
+        done();
+    };
+    return await tagChecker.handler(event, context, callback);
+});
+
+test('Expect this test case to pass', async (done) => {
+    let event = {
+        body: 'The following text<C><BB>is centred and in boldface</BB></C>'
+    };
+    const callback = (err, response) => {
+        if (err) {
+            done(err);
+        }
+        
         expect(response.statusCode).toEqual(200);
         expect(typeof response.body).toBe("string");
         let body = JSON.parse(response.body);

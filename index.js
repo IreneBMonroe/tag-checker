@@ -1,8 +1,8 @@
 const _ = require('lodash');
 
 const isValidTag = (tag) => {
-	//Is valid open tag or close Tag
-	return (/<[A-Z]>/g).test(tag) || (/<\/[A-Z]>/g).test(tag);
+	//Is it valid open tag or close Tag
+	return (/<[A-Z]+?>/g).test(tag) || (/<\/[A-Z]+?>/g).test(tag);
 };
 
 const validateTag = (markup) => {
@@ -16,8 +16,9 @@ const validateTag = (markup) => {
 	
 	for (let i = 0; i < allTags.length; i++) {
 		let isValid = isValidTag(allTags[i]);
+		
 		if (isValid) {
-			let tagKey = allTags[i].match(/[A-Z]/g)[0];
+			let tagKey = allTags[i].match(/[A-Z]+?/g)[0];
 			if (!_.includes(allTags[i], '/')) {
 				// Add all open tag to stack
 				stack.push(tagKey);
