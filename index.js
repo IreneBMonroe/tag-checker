@@ -16,7 +16,7 @@ const validateTag = (markup) => {
 	
 	for (let i = 0; i < allTags.length; i++) {
 		let isValid = isValidTag(allTags[i]);
-		
+		/* can be improve */
 		if (isValid) {
 			let tagKey = allTags[i].match(/[A-Z]+?/g)[0];
 			if (!_.includes(allTags[i], '/')) {
