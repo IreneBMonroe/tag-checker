@@ -33,7 +33,7 @@ const validateTag = (markup) => {
 					};
 					break;
 				} else if (!_.includes(stack, tagKey)) {
-					//Missing open tag
+					// Missing open tag
 					result = {
 						success: false,
 						expected: '#',
@@ -42,7 +42,7 @@ const validateTag = (markup) => {
 					};
 					break;
 				} else {
-					//remove tag from stack if closing tag is found
+					// Remove tag from stack if closing tag is found
 					_.pullAt(stack, stack.length - 1);
 				}
 			}
