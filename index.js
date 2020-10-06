@@ -9,11 +9,11 @@ const validateTag = (markup) => {
 	const stack = [];
 	let htmlText = markup.replace(/<[^>]*\/\s?>/g, '');
 	htmlText = htmlText.replace(/<[^A-Z\/][a-z\D\d.\s]+?>/g, '');
-	
+
 	const allTags = htmlText.match(/<.*?>/g);
-	
+
 	let result = null;
-	
+
 	for (let i = 0; i < allTags.length; i++) {
 		let isValid = isValidTag(allTags[i]);
 		/* can be improve */
@@ -23,28 +23,36 @@ const validateTag = (markup) => {
 				// Add all open tag to stack
 				stack.push(tagKey);
 			} else {
-				if (stack.length > 0 && stack[stack.length - 1] !== tagKey) {
-					// wrong nesting case
-					result = {
-						success: false,
-						expected: `</${stack[stack.length - 1]}>`,
-						unexpected: allTags[i],
-						message: `Expected </${stack[stack.length - 1]}> found ${allTags[i]}`
-					};
-					break;
-				} else if (!_.includes(stack, tagKey)) {
-					// Missing open tag
-					result = {
-						success: false,
-						expected: '#',
-						unexpected: allTags[i],
-						message: `Expected # found ${allTags[i]}`
-					};
-					break;
+				let stackLength = stack.length > 0 ? stack.length-1 : 0;
+
+				if (stack[stackLength] !== tagKey) {
+					if (stack[stackLength]){
+						// if last open tag is not equal to close tag
+						// wrong nesting case
+						result = {
+							success: false,
+							expected: `</${stack[stackLength]}>`,
+							unexpected: allTags[i],
+							message: `Expected </${stack[stack.length - 1]}> found ${allTags[i]}`
+						};
+						break;
+					} else {
+						// Missing open tag
+						// if close tag match
+						result = {
+							success: false,
+							expected: '#',
+							unexpected: allTags[i],
+							message: `Expected # found ${allTags[i]}`
+						};
+						break;
+					}
+
 				} else {
 					// Remove tag from stack if closing tag is found
 					_.pullAt(stack, stack.length - 1);
 				}
+
 			}
 		} else {
 			// Tag is invalid system don't know whether it's an open or a close tag
@@ -52,7 +60,7 @@ const validateTag = (markup) => {
 			break;
 		}
 	}
-	
+
 	if (_.isEmpty(stack) && result == null) {
 		result = {success: true, message: 'Correctly tagged paragraph'};
 	} else if (stack.length > 0 && result == null) {
@@ -64,14 +72,14 @@ const validateTag = (markup) => {
 			message: `Expected </${stack[0]}> found #`
 		};
 	}
-	
+
 	return result;
 };
 
 exports.handler = async (event, context, callback) => {
-	
+
 	if (!event || (event && !event.body)) return callback({message: 'Markup is required'});
-	
+
 	let validate = validateTag(event.body);
 	if (!validate.success) {
 		// return error response
@@ -89,5 +97,5 @@ exports.handler = async (event, context, callback) => {
 		};
 		return callback(null, response);
 	}
-	
+
 };
