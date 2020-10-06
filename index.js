@@ -15,9 +15,9 @@ const validateTag = (markup) => {
 	let result = null;
 
 	for (let i = 0; i < allTags.length; i++) {
-		let isValid = isValidTag(allTags[i]);
-		/* can be improve */
-		if (isValid) {
+		/*let isValid = isValidTag(allTags[i]);
+		/!* can be improve *!/
+		if (isValid) {*/
 			let tagKey = allTags[i].match(/[A-Z]+?/g)[0];
 			if (!_.includes(allTags[i], '/')) {
 				// Add all open tag to stack
@@ -54,11 +54,11 @@ const validateTag = (markup) => {
 				}
 
 			}
-		} else {
+		/*} else {
 			// Tag is invalid system don't know whether it's an open or a close tag
 			result = {success: false, message: `Found invalid tag ${allTags[i]}`};
 			break;
-		}
+		}*/
 	}
 
 	if (_.isEmpty(stack) && result == null) {

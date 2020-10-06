@@ -119,7 +119,7 @@ test('Catch error invalid tag', async (done) => {
     const callback = (err, response) => {
         if (err) {
             expect(err).toEqual({
-                message: 'Found invalid tag <B\/B>'
+                message: 'Expected <\/C> found <B\/B>'
             });
             done();
         }
